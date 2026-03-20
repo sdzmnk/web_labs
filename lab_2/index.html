@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Екологічний калькулятор</title>
+    <style>
+        :root { --primary: #2563eb; --bg: #f8fafc; --card: #ffffff; --text: #1e293b; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); display: flex; justify-content: center; padding: 20px; }
+        .container { background: var(--card); padding: 30px; border-radius: 12px; box-shadow: 0 10px 15px rgba(0,0,0,0.1); max-width: 600px; width: 100%; }
+        h2 { color: var(--primary); text-align: center; }
+        .input-group { display: flex; flex-direction: column; margin-bottom: 15px; }
+        label { font-size: 0.9rem; font-weight: 600; margin-bottom: 5px; color: #64748b; }
+        input { padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; }
+        button { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        .results { margin-top: 25px; display: none; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 10px; border: 1px solid #e2e8f0; text-align: left; }
+        th { background: #f1f5f9; }
+        .val { font-weight: bold; color: var(--primary); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>WEB КАЛЬКУЛЯТОР</h2>
+    <div class="input-group">
+        <label>Донецьке газове вугілля марки ГР (т):</label>
+        <input type="number" id="coal">
+    </div>
+    <div class="input-group">
+        <label>Високосірчистий мазут марки 40 (т):</label>
+        <input type="number" id="fuelOil">
+    </div>
+    <div class="input-group">
+        <label>Природний газ із газопроводу Уренгой-Ужгород (м3):</label>
+        <input type="number" id="naturalGas">
+    </div>
+    <button onclick="calculate()">Розрахувати</button>
+
+    <div id="results" class="results">
+        <table>
+            <thead>
+                <tr>
+                    <th>Паливо</th>
+                    <th>Показник емісії (г/ГДж)</th>
+                    <th>Валовий викид (т)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Вугілля</td>
+                    <td id="c-ei" class="val"></td>
+                    <td id="c-t" class="val"></td>
+                </tr>
+                <tr>
+                    <td>Мазут</td>
+                    <td id="o-ei" class="val"></td>
+                    <td id="o-t" class="val"></td>
+                </tr>
+                <tr>
+                    <td>Газ</td>
+                    <td id="g-ei" class="val"></td>
+                    <td id="g-t" class="val"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    async function calculate() {
+        const data = {
+            coal: parseFloat(document.getElementById('coal').value) || 0,
+            fuelOil: parseFloat(document.getElementById('fuelOil').value) || 0,
+            naturalGas: parseFloat(document.getElementById('naturalGas').value) || 0
+        };
+
+        const response = await fetch('/calculate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        const res = await response.json();
+        document.getElementById('results').style.display = 'block';
+        document.getElementById('c-ei').textContent = res.coalEI;
+        document.getElementById('c-t').textContent = res.coalTotal;
+        document.getElementById('o-ei').textContent = res.oilEI;
+        document.getElementById('o-t').textContent = res.oilTotal;
+        document.getElementById('g-ei').textContent = res.gasEI;
+        document.getElementById('g-t').textContent = res.gasTotal;
+    }
+</script>
+
+</body>
+</html>
