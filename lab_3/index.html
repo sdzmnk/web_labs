@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Розрахунок навантаження</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+  <h1>Введіть дані</h1>
+
+  <form method="POST">
+    <label>Номінальна потужність ЕП (кВт):</label>
+    <input type="number" step="0.01" name="powerEP1" value="20" required>
+
+    <label>Коефіцієнт використання:</label>
+    <input type="number" step="0.01" name="utilEP6" value="0.15" required>
+
+    <label>Коефіцієнт реактивної потужності:</label>
+    <input type="number" step="0.01" name="reactiveEP4" value="1.33" required>
+
+    <button type="submit">Обрахувати</button>
+  </form>
+
+  {{if .}}
+  <div class="results">
+    <h2>Результати</h2>
+
+    <table>
+      <tr>
+        <th>Назва</th>
+        <th>Результ</th>
+      </tr>
+
+      <tr>
+        <td>Груповий коефіцієнт використання</td>
+        <td>{{printf "%.2f" .GroupUtilization}}</td>
+      </tr>
+
+      <tr>
+        <td>Ефективна кількість ЕП</td>
+        <td>{{printf "%.2f" .EffectiveNumEP}}</td>
+      </tr>
+
+      <tr>
+        <td>Розрахунковий коефіцієнт активної потужності</td>
+        <td>1.25</td>
+      </tr>
+
+      <tr>
+        <td>Розрахункове активне навантаження (кВт)</td>
+        <td>{{printf "%.2f" .ActiveLoad}}</td>
+      </tr>
+
+      <tr>
+        <td>Розрахункове реактивне навантаження (кВАр)</td>
+        <td>{{printf "%.2f" .ReactiveLoad}}</td>
+      </tr>
+
+      <tr>
+        <td>Повна потужність (кВт)</td>
+        <td>{{printf "%.2f" .TotalPower}}</td>
+      </tr>
+
+      <tr>
+        <td>Розрахунковий груповий струм</td>
+        <td>{{printf "%.2f" .GroupCurrent}}</td>
+      </tr>
+
+      <tr>
+        <td>Коефіцієнти використання цеху в цілому</td>
+        <td>{{printf "%.2f" .GroupUtilizationShop}}</td>
+      </tr>
+
+      <tr>
+        <td>Ефективна кількість ЕП цеху в цілому</td>
+        <td>{{printf "%.2f" .EffectiveNumEPShop}}</td>
+      </tr>
+
+      <tr>
+        <td>Розрахунковий коефіцієнт активної потужності цеху</td>
+        <td>0.70</td>
+      </tr>
+
+      <tr>
+        <td>Розрахункове активне навантаження на шинах 0,38 кВ ТП</td>
+        <td>{{printf "%.2f" .ActiveLoadShop}}</td>
+      </tr>
+
+      <tr>
+        <td>Розрахункове реактивне навантаження на шинах 0,38 кВ ТП</td>
+        <td>{{printf "%.2f" .ReactiveLoadShop}}</td>
+      </tr>
+
+      <tr>
+        <td>Повна потужність на шинах 0,38 кВ ТП</td>
+        <td>{{printf "%.2f" .TotalPowerShop}}</td>
+      </tr>
+
+      <tr>
+        <td>Розрахунковий груповий струм на шинах 0,38 кВ ТП</td>
+        <td>{{printf "%.2f" .GroupCurrentShop}}</td>
+      </tr>
+
+    </table>
+  </div>
+  {{end}}
+
+</div>
+
+</body>
+</html>
