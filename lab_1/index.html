@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Енергетичний калькулятор палива</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #64748b;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --accent: #10b981;
+        }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--text); display: flex; justify-content: center; padding: 20px; }
+        .container { background: var(--card); padding: 30px; border-radius: 12px; box-shadow: 0 10px 15px rgba(0,0,0,0.1); max-width: 900px; width: 100%; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; }
+        .tab-btn { padding: 10px 20px; cursor: pointer; border: none; background: none; font-weight: bold; color: var(--secondary); transition: 0.3s; }
+        .tab-btn.active { color: var(--primary); border-bottom: 2px solid var(--primary); margin-bottom: -2px; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        h2 { color: var(--primary); text-align: center; margin-bottom: 5px; }
+        .description { text-align: center; font-size: 0.9rem; color: var(--secondary); margin-bottom: 25px; }
+        .grid-inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 12px; margin-bottom: 20px; }
+        .input-group { display: flex; flex-direction: column; }
+        label { font-size: 0.85rem; font-weight: 600; margin-bottom: 4px; color: var(--secondary); }
+        input { padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; outline: none; }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(37,99,235,0.1); }
+        button { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        button:hover { background: #1d4ed8; }
+        .results-section { margin-top: 25px; padding-top: 20px; border-top: 1px dashed #cbd5e1; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; background: white; }
+        th, td { padding: 12px; border: 1px solid #e2e8f0; text-align: left; }
+        th { background: #f1f5f9; font-size: 0.9rem; }
+        .highlight { font-weight: bold; color: var(--primary); text-align: right; }
+        .unit { font-size: 0.8rem; color: var(--secondary); font-weight: normal; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="tabs">
+        <button class="tab-btn active" onclick="openTab(event, 'task1')">Завдання 1 (Тверде паливо)</button>
+        <button class="tab-btn" onclick="openTab(event, 'task2')">Завдання 2 (Мазут)</button>
+    </div>
+
+    <div id="task1" class="tab-content active">
+        <h2>Розрахунок складу твердого палива</h2>
+        <p class="description">Перерахунок елементарного складу з робочої маси на суху та горючу</p>
+        <div class="grid-inputs">
+            <div class="input-group"><label>H<sup>P</sup> (%)</label><input type="number" id="h1" step="0.1"></div>
+            <div class="input-group"><label>C<sup>P</sup> (%)</label><input type="number" id="c1" step="0.1"></div>
+            <div class="input-group"><label>S<sup>P</sup> (%)</label><input type="number" id="s1" step="0.1"></div>
+            <div class="input-group"><label>N<sup>P</sup> (%)</label><input type="number" id="n1" step="0.1"></div>
+            <div class="input-group"><label>O<sup>P</sup> (%)</label><input type="number" id="o1" step="0.1"></div>
+            <div class="input-group"><label>W<sup>P</sup> (%)</label><input type="number" id="w1" step="0.1"></div>
+            <div class="input-group"><label>A<sup>P</sup> (%)</label><input type="number" id="a1" step="0.1"></div>
+        </div>
+        <button onclick="calculateTask1()">Розрахувати Тверде Паливо</button>
+        <div id="res-section-1" class="results-section" style="display:none">
+            <h3>Результати розрахунку</h3>
+            <table>
+                <tr><td>Коефіцієнт (KPC / KPG)</td><td class="highlight"><span id="t1-kpc"></span> / <span id="t1-kpg"></span></td></tr>
+                <tr><td>Нижча теплота (Робоча) <span class="unit">МДж/кг</span></td><td id="t1-qph" class="highlight"></td></tr>
+                <tr><td>Нижча теплота (Суха) <span class="unit">МДж/кг</span></td><td id="t1-qch" class="highlight"></td></tr>
+                <tr><td>Нижча теплота (Горюча) <span class="unit">МДж/кг</span></td><td id="t1-qgh" class="highlight"></td></tr>
+            </table>
+            <h4>Елементарний склад (%)</h4>
+            <table id="t1-comp-table">
+                <thead><tr><th>Елемент</th><th>Суха маса</th><th>Горюча маса</th></tr></thead>
+                <tbody id="t1-comp-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="task2" class="tab-content">
+        <h2>Розрахунок складу мазуту</h2>
+        <p class="description">Перерахунок складу мазуту на робочу масу для котла</p>
+        <div class="grid-inputs">
+            <div class="input-group"><label>C<sup>Г</sup> (%)</label><input type="number" id="c2" step="0.01"></div>
+            <div class="input-group"><label>H<sup>Г</sup> (%)</label><input type="number" id="h2" step="0.01"></div>
+            <div class="input-group"><label>O<sup>Г</sup> (%)</label><input type="number" id="o2" step="0.01"></div>
+            <div class="input-group"><label>S<sup>Г</sup> (%)</label><input type="number" id="s2" step="0.01"></div>
+            <div class="input-group"><label>W<sup>P</sup> (%)</label><input type="number" id="w2" step="0.01"></div>
+            <div class="input-group"><label>A<sup>P</sup> (%)</label><input type="number" id="a2" step="0.01"></div>
+            <div class="input-group"><label>Q<sup>Г</sup> <span class="unit">МДж/кг</span></label><input type="number" id="q2" step="0.01"></div>
+            <div class="input-group"><label>V<sup>Г</sup> <span class="unit">мг/кг</span></label><input type="number" id="v2" step="0.01"></div>
+        </div>
+        <button onclick="calculateTask2()">Розрахувати Мазут</button>
+        <div id="res-section-2" class="results-section" style="display:none">
+            <h3>Склад робочої маси мазуту</h3>
+            <table>
+                <thead><tr><th>Показник</th><th>Значення</th></tr></thead>
+                <tbody>
+                    <tr><td>Вуглець (C<sup>P</sup>)</td><td id="m-c" class="highlight"></td></tr>
+                    <tr><td>Водень (H<sup>P</sup>)</td><td id="m-h" class="highlight"></td></tr>
+                    <tr><td>Кисень (O<sup>P</sup>)</td><td id="m-o" class="highlight"></td></tr>
+                    <tr><td>Сірка (S<sup>P</sup>)</td><td id="m-s" class="highlight"></td></tr>
+                    <tr><td>Зольність (A<sup>P</sup>)</td><td id="m-a" class="highlight"></td></tr>
+                    <tr><td>Ванадій (V<sup>P</sup>) <span class="unit">мг/кг</span></td><td id="m-v" class="highlight"></td></tr>
+                    <tr><td>Нижча теплота (Q<sup>P</sup>) <span class="unit">МДж/кг</span></td><td id="m-q" class="highlight"></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openTab(evt, tabName) {
+        let i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tab-content");
+        for (i = 0; i < tabcontent.length; i++) tabcontent[i].classList.remove("active");
+        tablinks = document.getElementsByClassName("tab-btn");
+        for (i = 0; i < tablinks.length; i++) tablinks[i].classList.remove("active");
+        document.getElementById(tabName).classList.add("active");
+        evt.currentTarget.classList.add("active");
+    }
+
+    async function calculateTask1() {
+        const data = {
+            h: parseFloat(document.getElementById('h1').value) || 0,
+            c: parseFloat(document.getElementById('c1').value) || 0,
+            s: parseFloat(document.getElementById('s1').value) || 0,
+            n: parseFloat(document.getElementById('n1').value) || 0,
+            o: parseFloat(document.getElementById('o1').value) || 0,
+            w: parseFloat(document.getElementById('w1').value) || 0,
+            a: parseFloat(document.getElementById('a1').value) || 0
+        };
+        try {
+            const response = await fetch('/calculate1', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const res = await response.json();
+            document.getElementById('res-section-1').style.display = 'block';
+            document.getElementById('t1-kpc').textContent = res.kpc.toFixed(4);
+            document.getElementById('t1-kpg').textContent = res.kpg.toFixed(4);
+            document.getElementById('t1-qph').textContent = res.qph.toFixed(2);
+            document.getElementById('t1-qch').textContent = res.qch.toFixed(2);
+            document.getElementById('t1-qgh').textContent = res.qgh.toFixed(2);
+            let html = "";
+            ["H", "C", "S", "N", "O", "A"].forEach(el => {
+                html += `<tr><td>${el} %</td><td class="highlight">${res.dry[el].toFixed(2)}</td><td class="highlight">${res.burn[el].toFixed(2)}</td></tr>`;
+            });
+            document.getElementById('t1-comp-body').innerHTML = html;
+        } catch (e) { alert("Помилка сервера!"); }
+    }
+
+    async function calculateTask2() {
+        const data = {
+            c: parseFloat(document.getElementById('c2').value) || 0,
+            h: parseFloat(document.getElementById('h2').value) || 0,
+            o: parseFloat(document.getElementById('o2').value) || 0,
+            s: parseFloat(document.getElementById('s2').value) || 0,
+            w: parseFloat(document.getElementById('w2').value) || 0,
+            a: parseFloat(document.getElementById('a2').value) || 0,
+            q: parseFloat(document.getElementById('q2').value) || 0,
+            v: parseFloat(document.getElementById('v2').value) || 0
+        };
+        try {
+            const response = await fetch('/calculate2', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const res = await response.json();
+            document.getElementById('res-section-2').style.display = 'block';
+            document.getElementById('m-c').textContent = res.c.toFixed(2);
+            document.getElementById('m-h').textContent = res.h.toFixed(2);
+            document.getElementById('m-o').textContent = res.o.toFixed(2);
+            document.getElementById('m-s').textContent = res.s.toFixed(2);
+            document.getElementById('m-a').textContent = res.a.toFixed(2);
+            document.getElementById('m-v').textContent = res.v.toFixed(2);
+            document.getElementById('m-q').textContent = res.q.toFixed(2);
+        } catch (e) { alert("Помилка розрахунку!"); }
+    }
+</script>
+
+</body>
+</html>
