@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Калькулятори</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+
+<h1>Завдання 1</h1>
+<form method="POST">
+<h2>Введіть дані</h2>
+
+<label>Струм КЗ (Iₖ):</label>
+<input name="IkVal" value="2500">
+
+<label>Розрахункове навантаження (Sₘ):</label>
+<input name="SmVal" value="1300">
+
+<label>Фіктивний час (tф):</label>
+<input name="tPhiVal" value="2.5">
+
+<button>Обрахувати</button>
+
+<h2>Результати</h2>
+<p>Розрахунковий струм: {{printf "%.2f" .ImVal}}</p>
+<p>Післяаварійний струм: {{printf "%.2f" .ImPaVal}}</p>
+<p>Економічний переріз: {{printf "%.2f" .SekVal}}</p>
+<p>Термічна стійкість: {{printf "%.2f" .SSMinVal}}</p>
+</form>
+
+<hr>
+
+<h1>Завдання 2</h1>
+<form method="POST">
+
+<label>Потужність КЗ:</label>
+<input name="KZPower" value="200">
+
+<button>Обрахувати</button>
+
+<p>Сумарний опір: {{printf "%.2f" .SumXVal}}</p>
+<p>Струм КЗ: {{printf "%.2f" .Ip0Val}}</p>
+
+</form>
+
+<hr>
+
+<h1>Завдання 3</h1>
+
+<form method="POST" class="block">
+
+<h2>Початкові дані</h2>
+
+<label>Максимальна напруга короткого замикання:</label>
+<input name="Ukmax" value="11.1">
+
+<label>Номінальна напруга вольтажу:</label>
+<input name="Uvn" value="115">
+
+<label>Номінальна потужність трансформатора:</label>
+<input name="Snom" value="6.3">
+
+<label>Активний опір статора:</label>
+<input name="Rsh" value="10.65">
+
+<label>Активний опір статора:</label>
+<input name="Rsh2" value="10.65">
+
+<label>Реактивний опір статора:</label>
+<input name="Xsh" value="24.02">
+
+<label>Мінімальний активний опір статора:</label>
+<input name="RshMin" value="34.88">
+
+<label>Мінімальний активний опір статора:</label>
+<input name="RshMin2" value="34.88">
+
+<label>Мінімальний реактивний опір статора:</label>
+<input name="XshMin" value="65.68">
+
+<button type="submit">Обрахувати</button>
+
+<h2>Результати</h2>
+
+<table>
+<tr>
+  <th>Назва</th>
+  <th>Результат</th>
+</tr>
+
+<tr>
+  <td>Реактивний опір силового трансформатора</td>
+  <td>{{printf "%.2f" .XtVal}}</td>
+</tr>
+
+<tr>
+  <td>Опори в нормальному режимі</td>
+  <td>Z: {{printf "%.2f" .ZshVal}}; X: {{printf "%.2f" .XshVal}}</td>
+</tr>
+
+<tr>
+  <td>Опори в мінімальному режимі</td>
+  <td>Z: {{printf "%.2f" .ZshMinVal}}; X: {{printf "%.2f" .XshMinVal}}</td>
+</tr>
+
+<tr>
+  <td>Струми в нормальному режимі</td>
+  <td>I(3): {{printf "%.2f" .Ish3Val}}; I(2): {{printf "%.2f" .Ish2Val}}</td>
+</tr>
+
+<tr>
+  <td>Струми в мінімальному режимі</td>
+  <td>
+    I(3): {{printf "%.2f" .Ish3MinVal}}; 
+    I(2): {{printf "%.2f" .Ish2MinVal}}
+  </td>
+</tr>
+
+</table>
+
+</form>
+
+</div>
+</body>
+</html>
