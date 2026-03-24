@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Обчислення</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="container">
+
+<h1>Завдання 1: Частоти відмов</h1>
+<form method="POST">
+    <input type="hidden" name="form_type" value="task1">
+    <label>ПЛ-110 кВ (Ω): <input name="PL110KVOmegaVal" value="{{if .OmegaSumVal}}{{.OmegaSumVal}}{{else}}0.007{{end}}"></label>
+    <label>Т-110 кВ (Ω): <input name="T110KVOmegaVal" value="{{if .OmegaSumVal}}{{.TvosVal}}{{else}}0.015{{end}}"></label>
+    <label>В-110 кВ (Ω): <input name="V110KVOmegaVal" value="0.01"></label>
+    <label>В-10 кВ (Ω): <input name="V10KVOmegaVal" value="0.02"></label>
+    <label>Збірні шини 10кВ (Ω): <input name="tiresOmegaVal" value="0.03"></label>
+    <label>ПЛ-110 (t): <input name="PL110KVTviVal" value="10"></label>
+    <label>Т-110 (t): <input name="T110KVTviVal" value="100"></label>
+    <label>В-110 (t): <input name="V110KVTviVal" value="30"></label>
+    <label>В-10 (t): <input name="V10KVTviVal" value="15"></label>
+    <label>Шини (t): <input name="tiresTviVal" value="2"></label>
+    <label>Kmax: <input name="PlannedKMaxVal" value="43"></label>
+    <button type="submit">Обрахувати</button>
+</form>
+
+{{if .OmegaSumVal}}
+<h2>Результати завдання 1</h2>
+<p>Частота відмов одноколової системи: {{printf "%.2f" .OmegaSumVal}}</p>
+<p>Середня тривалість відновлення: {{printf "%.2f" .TvosVal}}</p>
+<p>Коефіцієнт аварійного простою: {{printf "%.2f" (mul .KaosVal 10000)}} ×10⁻⁴</p>
+<p>Коефіцієнт планового простою: {{printf "%.2f" (mul .KposVal 10000)}} ×10⁻⁴</p>
+<p>Частота відмов двоколової системи: {{printf "%.2f" (mul .DoubleOmega 10000)}} ×10⁻⁴</p>
+<p>Частота відмов з секційним вимикачем: {{printf "%.4f" .SystemOmega}}</p>
+{{end}}
+
+<hr>
+
+<h1>Завдання 2: Збитки</h1>
+<form method="POST">
+    <input type="hidden" name="form_type" value="task2">
+    <label>Збитки аварійні (грн/кВт·год): <input name="ZperA" value="23.6"></label>
+    <label>Збитки планові (грн/кВт·год): <input name="ZperP" value="17.6"></label>
+    <label>ω (частота відмов): <input name="Omega" value="0.01"></label>
+    <label>t (тривалість відновлення): <input name="tv" value="0.045"></label>
+    <label>Pм (кВт): <input name="Pm" value="5120"></label>
+    <label>Tм (год): <input name="Tm" value="6451"></label>
+    <label>k (плановий простій): <input name="kp" value="0.004"></label>
+    <button type="submit">Обрахувати</button>
+</form>
+
+
+
+{{if .Wneda}}
+<h2>Результати завдання 2</h2>
+<p>М(W нед.а): {{printf "%.0f" .Wneda}} кВт·год</p>
+<p>М(W нед.п): {{printf "%.0f" .Wnedp}} кВт·год</p>
+<p>М(Зпер): {{printf "%.0f" .Zper}} грн</p>
+{{end}}
+
+</div>
+</body>
+</html>
