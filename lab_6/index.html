@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Розрахунок електричних навантажень</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f9; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        h2, h3 { color: #333; }
+        .form-group { margin-bottom: 10px; }
+        label { display: block; margin-bottom: 5px; font-size: 14px; }
+        input { width: 100%; padding: 8px; box-sizing: border-box; }
+        button { background: #0056b3; color: white; border: none; padding: 12px; cursor: pointer; width: 100%; margin-top: 20px; font-size: 16px; border-radius: 4px; }
+        .results { margin-top: 30px; border-top: 2px solid #eee; padding-top: 20px; }
+        .val { font-weight: bold; color: #d9534f; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Веб-калькулятор</h2>
+        <form method="POST">
+            <div class="grid">
+                <div>
+                    <h3>Дані для ШР1</h3>
+                    <div class="form-group"><label>∑n·Pн (кВт):</label> <input type="number" step="any" name="shr_sum_ph" value="456"></div>
+                    <div class="form-group"><label>∑n·Pн·Kв:</label> <input type="number" step="any" name="shr_sum_ph_kv" value="95.16"></div>
+                    <div class="form-group"><label>∑n·Pн·Kв·tgφ:</label> <input type="number" step="any" name="shr_sum_ph_kv_tg" value="107.302"></div>
+                    <div class="form-group"><label>∑n·Pн²:</label> <input type="number" step="any" name="shr_sum_ph2" value="14732"></div>
+                    <div class="form-group"><label>Kр (за табл. 6.3):</label> <input type="number" step="any" name="shr_kp" value="1.25"></div>
+                </div>
+                <div>
+                    <h3>Дані для Цеху в цілому</h3>
+                    <div class="form-group"><label>∑Pн (кВт):</label> <input type="number" step="any" name="shop_sum_ph" value="2330"></div>
+                    <div class="form-group"><label>∑Pн·Kв:</label> <input type="number" step="any" name="shop_sum_ph_kv" value="752"></div>
+                    <div class="form-group"><label>∑Pн·Kв·tgφ:</label> <input type="number" step="any" name="shop_sum_ph_kv_tg" value="657"></div>
+                    <div class="form-group"><label>∑n·Pн²:</label> <input type="number" step="any" name="shop_sum_ph2" value="96388"></div>
+                    <div class="form-group"><label>Kр (за табл. 6.4):</label> <input type="number" step="any" name="shop_kp" value="0.7"></div>
+                </div>
+            </div>
+            <button type="submit">Розрахувати навантаження</button>
+        </form>
+
+        {{if .}}
+        <div class="results grid">
+            <div>
+                <h3>Результати для ШР1:</h3>
+                <p>Груповий коефіцієнт (Kв): <span class="val">{{printf "%.4f" .ShrKv}}</span></p>
+                <p>Ефективна кількість (ne): <span class="val">{{.ShrNe}}</span></p>
+                <p>Активне навантаження (Pp): <span class="val">{{printf "%.2f" .ShrPp}} кВт</span></p>
+                <p>Реактивне навантаження (Qp): <span class="val">{{printf "%.3f" .ShrQp}} квар</span></p>
+                <p>Повна потужність (Sp): <span class="val">{{printf "%.4f" .ShrSp}} кВ*А</span></p>
+                <p>Розрахунковий струм (Ip): <span class="val">{{printf "%.2f" .ShrIp}} А</span></p>
+            </div>
+            <div>
+                <h3>Результати для Цеху:</h3>
+                <p>Коефіцієнт використання (Kв): <span class="val">{{printf "%.2f" .ShopKv}}</span></p>
+                <p>Ефективна кількість (ne): <span class="val">{{.ShopNe}}</span></p>
+                <p>Активне навантаження (Pp): <span class="val">{{printf "%.1f" .ShopPp}} кВт</span></p>
+                <p>Реактивне навантаження (Qp): <span class="val">{{printf "%.1f" .ShopQp}} квар</span></p>
+                <p>Повна потужність (Sp): <span class="val">{{printf "%.0f" .ShopSp}} кВ*А</span></p>
+                <p>Розрахунковий струм (Ip): <span class="val">{{printf "%.2f" .ShopIp}} А</span></p>
+            </div>
+        </div>
+        {{end}}
+    </div>
+</body>
